@@ -1,0 +1,28 @@
+==============================================================================
+EPISTACK EVALUATION (combined, v5 (4 cases, incl covid_large))   case=covid_large [contested-large]   model=claude-sonnet-4-6
+Question: What is the probability that SARS-CoV-2 had a natural (zoonotic) origin?
+==============================================================================
+  PART_A_linkage_integrity
+    crux_localization_rate ................ 1.0
+    held_out_transfer_rate ................ 1.0
+    warranted_stance_survival_rate ........ 0.67
+    mean_posterior_width .................. 0.44    (warranted_width 0.25)
+    OBJECTIVE_METRIC_calibration_increase_per_claim_read ... 0.0031
+    mean_calibration_increase ............. 0.077
+    mean_claims_read ...................... 25
+
+    per_persona:
+      skeptic_low   range [0.20, 0.62] w 0.42  crux yes  held_out +0.03 correct grounded  stance held      cal_inc  0.14   /claim 0.0056
+      neutral       range [0.30, 0.75] w 0.45  crux yes  held_out +0.02 correct grounded  stance NOT held  cal_inc  0.125  /claim 0.005
+      skeptic_high  range [0.30, 0.75] w 0.45  crux yes  held_out +0.04 correct grounded  stance held      cal_inc -0.035  /claim -0.0014
+
+  PART_B_double_counting  (real 5-claim Wuhan cluster: c3, c20, c21, c22, c23)
+      skeptic_low   baseline 0.25  separate 0.55  flagged 0.45  effect 0.10
+      neutral       baseline 0.35  separate 0.70  flagged 0.60  effect 0.10
+      skeptic_high  baseline 0.70  separate 0.85  flagged 0.80  effect 0.05
+    mean_double_counting_effect ........... 0.083
+    fired ................................. true
+
+  caveat: LLM personas, few runs. Suggestive, not proof. Real 26-claim base built
+          from deep research and reconciled across two models.
+==============================================================================
