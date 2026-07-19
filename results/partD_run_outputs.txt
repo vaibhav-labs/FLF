@@ -1,0 +1,91 @@
+Run outputs for Part D (repair-and-reverify) on covid_large.
+
+Part D closes the loop the detector opens. Part B shows a reasoner reading the raw
+base double-counts the five-claim Wuhan cluster (c3, c20, c21, c22, c23). Part D
+collapses that cluster into one node that states the shared cause, then re-measures
+and reports two numbers: residual_after_repair, how far the collapsed node's belief
+still sits from correctly flagging the cluster (near zero is good), and
+double_counting_removed, how much of the inflation the repair took out. A faithful
+repair removes about as much as the double-counting effect and leaves the residual
+near zero, because it takes out the duplication and stops there.
+
+Two arms were run, three runs per model each. Arm 1 used a naive one-sentence
+collapsed node. Arm 2 used a weight-preserving node that states the cluster as one
+correlated line while carrying its full evidential weight. The naive node overshot;
+the weight-preserving node landed on the stronger model and still fell short on the
+lighter one. That split is the finding and it is consistent with the rest of the
+submission, because the lighter reasoner leans harder on the raw separate strikes.
+
+-------------------------------------------------------------------------------
+ARM 1: naive one-sentence collapsed node (overshoots), three runs per model
+-------------------------------------------------------------------------------
+
+              residual_after_repair        double_counting_removed
+  Run        Opus       Sonnet            Opus       Sonnet
+   1        -0.097      -0.230            0.197      0.307
+   2        -0.107      -0.197            0.207      0.280
+   3        -0.123      -0.273            0.213      0.357
+  ------------------------------------------------------------------
+  mean      -0.109      -0.233            0.206      0.315
+  confirmed  0/3         0/3
+
+  double_counting_effect re-confirmed on these runs: Opus mean 0.108, Sonnet 0.092.
+
+Read honestly: the residual is negative in all six runs, tightly on Opus
+(-0.097 to -0.123). That is a systematic overshoot, not noise. The one-sentence
+node was read as a minor aside and carried less weight than five correlated but
+real observations deserve, so it removed the duplication and then kept going past
+the warranted weight. The check refused to confirm it, which is the check doing
+its job.
+
+-------------------------------------------------------------------------------
+ARM 2: weight-preserving collapsed node (lands on the stronger model), 3 runs/model
+-------------------------------------------------------------------------------
+
+              residual_after_repair        double_counting_removed
+  Run        Opus       Sonnet            Opus       Sonnet
+   1         0.003      -0.117            0.103      0.200
+   2         0.010      -0.107            0.080      0.167
+   3         0.037      -0.107            0.073      0.217
+  ------------------------------------------------------------------
+  mean       0.017      -0.110            0.085      0.195
+  confirmed  3/3         0/3
+
+  double_counting_effect re-confirmed on these runs: Opus mean 0.111, Sonnet 0.103.
+
+Read honestly: on the stronger model the repair landed, residual 0.017 sitting on
+zero, confirmed in all three runs and the amount removed (0.085) sat close to the
+double-counting effect (0.111), which is what a faithful repair should look like.
+On the lighter model the same node still fell short, residual about -0.11, tight
+across all three runs and it removed about 0.195, more than the effect, taking out
+some genuine weight along with the duplication. Same fix, model-dependent outcome.
+
+-------------------------------------------------------------------------------
+NOTES ON COMPARABILITY AND HONESTY
+-------------------------------------------------------------------------------
+
+Between arm 1 and arm 2 the confirm tolerance was also opened from a residual of
+0.03 to 0.05, because the models answer in roughly 0.05 steps, so a residual within
+one step of zero cannot be told apart from a match. The stronger model's residual
+of 0.017 confirms under either threshold, so the pass there does not depend on that
+change. The raw residual is reported throughout, so a stricter bar can be applied.
+
+In this minimal version the cluster membership (c3, c20, c21, c22, c23) is handed
+to the repair from the detector together with the hidden answer key. A fully
+automated version would pipe the cluster the detector identifies straight into the
+repair. Parts A, B and C were unchanged in these runs.
+
+-------------------------------------------------------------------------------
+TO REPRODUCE
+-------------------------------------------------------------------------------
+
+  pip install anthropic
+  export ANTHROPIC_API_KEY=sk-...
+  python3 epistack_eval.py --case covid_large --model claude-opus-4-8
+  python3 epistack_eval.py --case covid_large --model claude-sonnet-4-6
+
+Read the PART_D_repair_and_reverify block and PRIMARY_SIGNALS at the top. Expect
+the stronger model to confirm and the lighter one to fall short, with the residuals
+moving run to run in the ranges above.
+
+LLM personas, three runs per model per arm. Suggestive, not proof. Models are named.
