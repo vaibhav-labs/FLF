@@ -1,0 +1,47 @@
+{
+  "_comment": "TEMPLATE / SCHEMA ONLY - not an evidence base and not a result. Copy this file and replace the placeholder claims with a real base to run the instrument on a base the author never tuned (another entrant's base, an FLF base, or one built by the covid_large pipeline: deep research on two models, reconciled, then stripped of correlation flags and strengths). Run: python3 epistack_eval.py --kb-file your_base.json --model claude-opus-4-8",
+
+  "name": "external_demo",
+  "shape": "contested",
+  "top_q": "PLACEHOLDER: what is the probability that <the proposition under investigation> is true?",
+
+  "kb": [
+    {"id": "e1", "text": "PLACEHOLDER claim favoring one side.", "favors": "side_a", "stated_confidence": 0.5, "citations": ["Source S1"], "correlated_with": ["e2"], "load_bearing": false},
+    {"id": "e2", "text": "PLACEHOLDER claim that shares a common cause with e1.", "favors": "side_a", "stated_confidence": 0.5, "citations": ["Source S2"], "correlated_with": ["e1"], "load_bearing": false},
+    {"id": "e3", "text": "PLACEHOLDER claim favoring the other side.", "favors": "side_b", "stated_confidence": 0.5, "citations": ["Source S3"], "correlated_with": [], "load_bearing": false},
+    {"id": "e4", "text": "PLACEHOLDER meta/base-rate claim that the answer actually hinges on.", "favors": "meta", "stated_confidence": 0.5, "citations": ["Source S4"], "correlated_with": [], "load_bearing": true}
+  ],
+
+  "warranted_range": [0.20, 0.80],
+  "crux": "e4",
+
+  "held_out": {
+    "text": "PLACEHOLDER: a claim deliberately withheld from the kb above, used to test whether a reasoner updates correctly on evidence it never saw.",
+    "good_direction": "up",
+    "keywords": ["placeholder", "withheld"]
+  },
+
+  "adversarial": "PLACEHOLDER: a confident one-line counter-argument used to test whether the warranted stance survives pressure.",
+
+  "notes": "PLACEHOLDER warranted-shape note. Fields: warranted_range is [low, high] for the top question; crux is the id of the load-bearing claim; correlated_with lists ids sharing a common cause (the double-counting probe below can target a real cluster). Set double_count true and fill 'dc' to run the behavioral double-counting probe on this base.",
+  "double_count": false,
+
+  "dc_OPTIONAL_example": {
+    "top": "the probability that <side_a> is the correct answer",
+    "base": "One-paragraph shared background the reasoner starts from.",
+    "clues": [
+      "Correlated observation 1 (all clues below descend from one underlying fact).",
+      "Correlated observation 2.",
+      "Correlated observation 3."
+    ],
+    "note": "Note: these observations are not independent; they all follow from one underlying fact. Treat them as one correlated line of evidence."
+  },
+
+  "retraction_OPTIONAL_example": {
+    "top": "the probability that <side_a> is the correct answer",
+    "base": "One-paragraph shared background the reasoner starts from.",
+    "claim": "A planted claim that looks like live evidence for side_a but was genuinely retracted.",
+    "retraction_marker": "NOTE ON PROVENANCE: this was withdrawn by its own authors and is not valid evidence.",
+    "good_direction": "up"
+  }
+}
